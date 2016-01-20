@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - q1
+  - q2
+  - q3
+  - q4
+  - q5
+  - q6
+  - New Tag
   layers:
   - Default
   - TransparentFX
