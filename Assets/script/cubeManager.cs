@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class cubeManager : MonoBehaviour {
 
     public static int boxSize;
+
     private int cubeCount;
     private int deg = 0;
+    private int rotDeg;
+    private int solvePhase=0;
+
     private bool rotFlag;
+    public static bool autoSolve; 
+
     private Vector3 axis;
     private Vector3 point;
-    public GameObject[] cubes;
 
+    public List<GameObject> cubes;
     public GameObject[] rotCubes = new GameObject[9];
+
+    public int[,,] panelColor = new int[7, 4, 4];
 
     public BoxCollider Right;
     public BoxCollider Left;
@@ -25,25 +34,29 @@ public class cubeManager : MonoBehaviour {
 
         boxSize = 3;
         cubeCount = boxSize * boxSize * boxSize;
-        cubes = new GameObject[cubeCount];
-	    for(int i=0; i<cubeCount; i++)
+        cubes = new List<GameObject>();
+	    for(int i=0; i<boxSize; i++)
         {
-            cubes[i] = transform.GetChild(i).gameObject;
+            for (int j = 0; j < boxSize * boxSize; j++)
+            {
+                cubes.Add(transform.GetChild(i*boxSize*boxSize+j).gameObject);
+            }
         }
+        cubes.Sort(delegate(GameObject a, GameObject b) { return (int)(b.transform.position.y - a.transform.position.y); });
 	}
 	
 	// Update is called once per frame
 	void Update () {
         if(!rotFlag && (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.D)))
         {
-            keyToDir(Input.inputString[0]);
+            keyToDir(Input.inputString[0], false, 90);
         }
-        if (rotFlag && deg < 90*9)
+        if (rotFlag && deg < rotDeg*9)
         {
             for (int i = 0; i < 9; i++)
             {
-                rotCubes[i].transform.RotateAround(point, axis, 1.0f);
-                deg++;
+                rotCubes[i].transform.RotateAround(point, axis, 5.0f);
+                deg+=5;
             }
         }
         else
@@ -52,10 +65,51 @@ public class cubeManager : MonoBehaviour {
             rotCubes = null;
             deg = 0;
         }
-	}
+        setPanelColor();
+        cubes.Sort(comp);
+    }
 
-    private void keyToDir(char key)
+    private void setPanelColor()
     {
+    }
+
+    private int comp(GameObject a, GameObject b){
+        if ((int)b.transform.position.y - (int)a.transform.position.y < 0)
+        {
+            return -1;
+        }else if((int)b.transform.position.y - (int)a.transform.position.y > 0)
+        {
+            return 1;
+        }
+        else
+        {
+            if ((int)b.transform.position.z - (int)a.transform.position.z < 0)
+            {
+                return -1;
+            }
+            else if ((int)b.transform.position.z - (int)a.transform.position.z > 0)
+            {
+                return 1;
+            }
+            else
+            {
+                if ((int)a.transform.position.x - (int)b.transform.position.x < 0)
+                {
+                    return -1;
+                }
+                else if ((int)a.transform.position.x - (int)b.transform.position.x > 0)
+                {
+                    return 1;
+                }
+            }
+        }
+        if(a!=b)
+        Debug.Log(a.name+";"+b.name);
+        return 0;
+    }
+
+    private void keyToDir(char key, bool Reverse, int setDeg) {
+        int[] tmpColor = { 0, 0, 0 };
         switch (key)
         {
             case 'R':
@@ -63,11 +117,11 @@ public class cubeManager : MonoBehaviour {
                 Rotation(Right);
                 break;
             case 'L':
-                axis = new Vector3(1, 0, 0);
+                axis = new Vector3(-1, 0, 0);
                 Rotation(Left);
                 break;
             case 'F':
-                axis = new Vector3(0, 0, 1);
+                axis = new Vector3(0, 0, -1);
                 Rotation(Forwerd);
                 break;
             case 'B':
@@ -79,10 +133,15 @@ public class cubeManager : MonoBehaviour {
                 Rotation(Up);
                 break;
             case 'D':
-                axis = new Vector3(0, 1, 0);
+                axis = new Vector3(0, -1, 0);
                 Rotation(Down);
                 break;
         }
+        if (Reverse)
+        {
+            axis *= -1;
+        }
+        rotDeg = setDeg;
     }
 
     private void Rotation(BoxCollider collid)
@@ -105,6 +164,45 @@ public class cubeManager : MonoBehaviour {
             }
         }
         rotFlag = true;
+    }
+
+    private void solving()
+    {
+        switch (solvePhase)
+        {
+            case 0://D_cross
+                D_cross();
+                break;
+            case 1://F2L
+                F2L();
+                break;
+            case 2://OLL
+                OLL();
+                break;
+            case 3://PLL
+                PLL();
+                break;
+        }
+    }
+
+    private void D_cross()
+    {
+
+    }
+
+    private void F2L()
+    {
+
+    }
+
+    private void OLL()
+    {
+
+    }
+
+    private void PLL()
+    {
+
     }
 
 }
