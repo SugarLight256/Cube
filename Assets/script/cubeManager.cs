@@ -66,46 +66,10 @@ public class cubeManager : MonoBehaviour {
             deg = 0;
         }
         setPanelColor();
-        cubes.Sort(comp);
     }
 
     private void setPanelColor()
     {
-    }
-
-    private int comp(GameObject a, GameObject b){
-        if ((int)b.transform.position.y - (int)a.transform.position.y < 0)
-        {
-            return -1;
-        }else if((int)b.transform.position.y - (int)a.transform.position.y > 0)
-        {
-            return 1;
-        }
-        else
-        {
-            if ((int)b.transform.position.z - (int)a.transform.position.z < 0)
-            {
-                return -1;
-            }
-            else if ((int)b.transform.position.z - (int)a.transform.position.z > 0)
-            {
-                return 1;
-            }
-            else
-            {
-                if ((int)a.transform.position.x - (int)b.transform.position.x < 0)
-                {
-                    return -1;
-                }
-                else if ((int)a.transform.position.x - (int)b.transform.position.x > 0)
-                {
-                    return 1;
-                }
-            }
-        }
-        if(a!=b)
-        Debug.Log(a.name+";"+b.name);
-        return 0;
     }
 
     private void keyToDir(char key, bool Reverse, int setDeg) {
