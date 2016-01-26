@@ -11,6 +11,13 @@ TagManager:
   - q5
   - q6
   - dir
+  - red
+  - blue
+  - white
+  - yellow
+  - green
+  - orange
+  - black
   layers:
   - Default
   - TransparentFX

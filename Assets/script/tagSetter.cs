@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Cube : MonoBehaviour {
-
-    public Vector3 Pos;
+public class tagSetter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        transform.tag = GetComponent<MeshRenderer>().materials[0].name;
+        string tmp = GetComponent<MeshRenderer>().materials[0].name;
+        tag = tmp.Split(' ')[0];
 	}
 	
 	// Update is called once per frame

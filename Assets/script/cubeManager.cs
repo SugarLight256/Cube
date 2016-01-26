@@ -20,7 +20,8 @@ public class cubeManager : MonoBehaviour {
     public List<GameObject> cubes;
     public GameObject[] rotCubes = new GameObject[9];
 
-    public int[,,] panelColor = new int[7, 4, 4];
+    public int[,,] panelColor = new int[6, 3, 3];
+    private Ray[,,] rays = new Ray[6, 3, 3];
 
     public BoxCollider Right;
     public BoxCollider Left;
@@ -42,7 +43,30 @@ public class cubeManager : MonoBehaviour {
                 cubes.Add(transform.GetChild(i*boxSize*boxSize+j).gameObject);
             }
         }
-        cubes.Sort(delegate(GameObject a, GameObject b) { return (int)(b.transform.position.y - a.transform.position.y); });
+
+        float[] xyz = new float[3];
+        for(int i=0; i<6; i++)
+        {
+            if (i < 3)
+            {
+                xyz[i % 3] = 4;
+            }
+            else
+            {
+                xyz[i % 3] = -4;
+            }
+            for(int x=0; x<3; x++)
+            {
+                xyz[(i+1)%3] = x + 0.5f;
+                for(int y=0; y<3; y++)
+                {
+                    xyz[(i+2)%3] = y + 0.5f;
+                    rays[i, x, y] = new Ray(new Vector3(xyz[0], xyz[1], xyz[2]), new Vector3((int)(-xyz[0] / 4), (int)(-xyz[1] / 4), (int)(-xyz[2] / 4)));
+                    //Debug.Log(rays[i, x, y]);
+                }
+            }
+        }
+
 	}
 	
 	// Update is called once per frame
@@ -70,6 +94,41 @@ public class cubeManager : MonoBehaviour {
 
     private void setPanelColor()
     {
+        RaycastHit hit;
+        for(int i=0; i<6; i++)
+        {
+            for(int j=0; j<3; j++)
+            {
+                for(int k=0; k<3; k++)
+                {
+                    Physics.Raycast(rays[i,j,k],out hit);
+                    switch (hit.transform.tag)
+                    {
+                        case "white":
+                            panelColor[i, j, k] = 0;
+                            break;
+                        case "yellow":
+                            panelColor[i, j, k] = 1;
+                            break;
+                        case "blue":
+                            panelColor[i, j, k] = 2;
+                            break;
+                        case "red":
+                            panelColor[i, j, k] = 3;
+                            break;
+                        case "green":
+                            panelColor[i, j, k] = 4;
+                            break;
+                        case "orange":
+                            panelColor[i, j, k] = 5;
+                            break;
+                        default:
+                            panelColor[i, j, k] = -1;
+                            break;
+                    }
+                }
+            }
+        }
     }
 
     private void keyToDir(char key, bool Reverse, int setDeg) {
