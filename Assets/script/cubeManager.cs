@@ -174,7 +174,7 @@ public class cubeManager : MonoBehaviour {
         rotCubes = new GameObject[9];
         for (int i = 0; i < tmpColl.Length; i++)
         {
-            if (tmpColl[i].tag != "dir")
+            if (tmpColl[i].tag == "cube")
             {
                 for(int j=0; j<9; j++)
                 {
