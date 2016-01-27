@@ -29,6 +29,11 @@ public class cubeManager : MonoBehaviour {
     public BoxCollider Back;
     public BoxCollider Up;
     public BoxCollider Down;
+    public BoxCollider LMid;
+    public BoxCollider RMid;
+    public BoxCollider sideMid;
+
+    public int[] midColor = new int[6];//R,U,B,L,D,F
 
 	// Use this for initialization
 	void Start () {
@@ -62,16 +67,21 @@ public class cubeManager : MonoBehaviour {
                 {
                     xyz[(i+2)%3] = y + 0.5f;
                     rays[i, x, y] = new Ray(new Vector3(xyz[0], xyz[1], xyz[2]), new Vector3((int)(-xyz[0] / 4), (int)(-xyz[1] / 4), (int)(-xyz[2] / 4)));
-                    //Debug.Log(rays[i, x, y]);
+                    Debug.Log(rays[i, x, y]);
                 }
             }
+        }
+        setPanelColor();
+        for(int i=0; i<6; i++)
+        {
+            midColor[i] = panelColor[i, 1, 1];
         }
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if(!rotFlag && (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.D)))
+        if(!rotFlag && (Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.L) || Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.B) || Input.GetKeyDown(KeyCode.U) || Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3)))
         {
             keyToDir(Input.inputString[0], false, 90);
         }
@@ -101,7 +111,7 @@ public class cubeManager : MonoBehaviour {
             {
                 for(int k=0; k<3; k++)
                 {
-                    Physics.Raycast(rays[i,j,k],out hit);
+                    Physics.Raycast(rays[i,j,k],out hit, 5.0f);
                     switch (hit.transform.tag)
                     {
                         case "white":
@@ -122,8 +132,12 @@ public class cubeManager : MonoBehaviour {
                         case "orange":
                             panelColor[i, j, k] = 5;
                             break;
-                        default:
+                        case "black":
                             panelColor[i, j, k] = -1;
+                            break;
+                        default:
+                            panelColor[i, j, k] = 123;
+                            Debug.Log(hit.transform.tag);
                             break;
                     }
                 }
@@ -158,6 +172,19 @@ public class cubeManager : MonoBehaviour {
             case 'D':
                 axis = new Vector3(0, -1, 0);
                 Rotation(Down);
+                break;
+            case '1':
+                axis = new Vector3(0, 0, -1);
+                Rotation(RMid);
+                Debug.Log("asd");
+                break;
+            case '2':
+                axis = new Vector3(1, 0, 0);
+                Rotation(LMid);
+                break;
+            case '3':
+                axis = new Vector3(0, -1, 0);
+                Rotation(sideMid);
                 break;
         }
         if (Reverse)

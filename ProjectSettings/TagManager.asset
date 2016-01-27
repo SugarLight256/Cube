@@ -18,6 +18,8 @@ TagManager:
   - green
   - orange
   - black
+  - yallow
+  - cube
   layers:
   - Default
   - TransparentFX
